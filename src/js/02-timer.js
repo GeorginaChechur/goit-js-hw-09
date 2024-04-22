@@ -24,7 +24,6 @@ const options = {
       } else {
           startBtn.disabled = false;
           endTime = selectedDates[0]; 
-        //   startTimer(endTime);
       }
   },
 };
@@ -71,12 +70,8 @@ timerHour.textContent = addLeadingZero(hours);
 }
 
 startBtn.addEventListener('click', () => {
-  const endTime = flatpickr.parseDate(datePicker.value);
   if (!endTime) return; 
-  clearInterval(intervalId); 
   startTimer(endTime);
 });
 
-
-
-
+startBtn.disabled = true;
