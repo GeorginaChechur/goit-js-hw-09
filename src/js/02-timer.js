@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from "notiflix";
 
 const datePicker = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('[data-start]');
@@ -9,7 +10,7 @@ const timerMinutes = document.querySelector('[data-minutes]');
 const timerSeconds = document.querySelector('[data-seconds]');
 
 let endTime;
-let intervalId; 
+let intervalId;
 
 const options = {
   enableTime: true,
@@ -17,14 +18,13 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-      console.log(selectedDates[0]);
-      if (selectedDates[0] <= new Date()){
-          startBtn.disabled = true;
-          window.alert("Please choose a date in the future")
-      } else {
-          startBtn.disabled = false;
-          endTime = selectedDates[0]; 
-      }
+    if (selectedDates[0] <= new Date()) {
+      startBtn.disabled = true;
+      Notiflix.Notify.failure('Please choose a date in the future');
+    } else {
+      startBtn.disabled = false;
+      endTime = selectedDates[0];
+    }
   },
 };
 
@@ -40,7 +40,7 @@ function convertMs(ms) {
   const hours = Math.floor((ms % day) / hour);
   const minutes = Math.floor(((ms % day) % hour) / minute);
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-  
+
   return { days, hours, minutes, seconds };
 }
 
@@ -49,8 +49,7 @@ function addLeadingZero(value) {
 }
 
 function startTimer(duration) {
-  clearInterval(intervalId); 
-
+  clearInterval(intervalId);
   intervalId = setInterval(() => {
     const remainingTime = duration - new Date();
     if (remainingTime <= 0) {
@@ -63,15 +62,16 @@ function startTimer(duration) {
 
 function updateDisplay(ms) {
   const { days, hours, minutes, seconds } = convertMs(ms);
- timerDate.textContent = addLeadingZero(days);
-timerHour.textContent = addLeadingZero(hours);
+  timerDate.textContent = addLeadingZero(days);
+  timerHour.textContent = addLeadingZero(hours);
   timerMinutes.textContent = addLeadingZero(minutes);
   timerSeconds.textContent = addLeadingZero(seconds);
 }
 
 startBtn.addEventListener('click', () => {
-  if (!endTime) return; 
+  if (!endTime) return;
   startTimer(endTime);
+  startBtn.disabled = true;
 });
 
 startBtn.disabled = true;
